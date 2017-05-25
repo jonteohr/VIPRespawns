@@ -1,29 +1,31 @@
 #include <sourcemod>
 #include <colors>
-#include <keyvalues>
 #include <cstrike>
 
 int Number;
 int RespawnNumber[32];
 
 ConVar g_cvNumber;
+ConVar g_cvFlag;
 
 public Plugin myinfo = {
 	name = "VIPRespawns",
 	author = "BaroNN & Hypr",
 	description = "Gives VIP players 3 respawns per map.",
-	version = "1.1",
+	version = "1.2",
 	url = "https://github.com/condolent/viprespawns"
 };
 
 public void OnPluginStart() {
 	
-	AutoExecConfig(true, "viprespawns");
-	RegAdminCmd("sm_vipspawn", sm_vipspawn, ADMFLAG_RESERVATION);
-	HookEvent("round_start", Event_Start);
-	
+	g_cvFlag = CreateConVar("respawn_flag", "ADMFLAG_RESERVATION", "Users with this flag are allowed to use the respawn command. Flagnames: http://bit.ly/2rkYezB");
 	g_cvNumber = CreateConVar("respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
 	Number = g_cvNumber.IntValue;
+	
+	AutoExecConfig(true, "viprespawns");
+	RegAdminCmd("sm_vipspawn", sm_vipspawn, g_cvFlag.Flags);
+	HookEvent("round_start", Event_Start);
+	
 	
 }
 
