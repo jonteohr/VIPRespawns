@@ -12,7 +12,7 @@ public Plugin myinfo = {
 	name = "VIPRespawns",
 	author = "BaroNN & Hypr",
 	description = "Gives VIP players 3 respawns per map.",
-	version = "1.0",
+	version = "1.1",
 	url = "https://github.com/condolent/viprespawns"
 };
 
