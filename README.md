@@ -29,6 +29,7 @@ This is how the config looks like:
 respawn_amount "3"
 
 // Users with this flag are allowed to use the respawn command.
+// Correct flagnames needs to be used: http://bit.ly/2rkYezB
 // -
 // Default: "ADMFLAG_RESERVATION"
 respawn_flag "ADMFLAG_RESERVATION"
