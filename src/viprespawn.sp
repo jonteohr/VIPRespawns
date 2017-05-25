@@ -1,12 +1,15 @@
 #include <sourcemod>
 #include <colors>
+#include <keyvalues>
 #include <cstrike>
 
-#define Number 2
+int Number;
 int RespawnNumber[32];
 
+ConVar g_cvNumber;
+
 public Plugin myinfo = {
-	name = "Respawn For VIPS",
+	name = "VIPRespawns",
 	author = "BaroNN & Hypr",
 	description = "Gives VIP players 3 respawns per map.",
 	version = "1.0",
@@ -14,8 +17,18 @@ public Plugin myinfo = {
 };
 
 public void OnPluginStart() {
+	
+	AutoExecConfig(true, "viprespawns");
 	RegAdminCmd("sm_vipspawn", sm_vipspawn, ADMFLAG_RESERVATION);
 	HookEvent("round_start", Event_Start);
+	
+	g_cvNumber = CreateConVar("respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
+	Number = g_cvNumber.IntValue;
+	
+}
+
+public void OnConfigsExecuted() {
+	
 }
 
 public Action sm_vipspawn(int client, int args) {
@@ -27,7 +40,7 @@ public Action sm_vipspawn(int client, int args) {
 	if (!IsPlayerAlive(client)) {
 		
 		// Check how many times client has respawned
-		if(RespawnNumber[client] <= Number) {
+		if(RespawnNumber[client] < Number) {
 			
 			CS_RespawnPlayer(client);
 			RespawnNumber[client] += 1;
