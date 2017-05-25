@@ -1,0 +1,3 @@
+language: pawn
+notifications:
+  email: false
