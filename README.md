@@ -27,3 +27,8 @@ This is how the config looks like:
 // Default: "3"
 respawn_amount "3"
 ```
+
+
+### Credits
+Props to [B2SX](https://forums.alliedmods.net/member.php?u=265974) for creating the base-code for respawns!  
+What I did was clean the code a bit and added some more end-user friendly properties.
