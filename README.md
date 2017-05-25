@@ -3,7 +3,8 @@ Sourcemod plugin for CS:GO. Allowing players with A-flag respawn x times per map
 
 ## Usage
 Players with the `a`-flag gets (per default) 3 respawns per map.  
-To respawn, you simply use the command `!vipspawn` when dead.
+To respawn, you simply use the command `!vipspawn` when dead.  
+You can also check how many respawns you have left via `!spawnsleft`.
 
 ## Downloads
 [Releases](https://github.com/condolent/VIPRespawns/releases)
