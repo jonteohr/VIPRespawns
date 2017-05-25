@@ -15,6 +15,8 @@ Simply download the `viprespawn.smx` file via the link above and drag the file t
 Then execute command in server console:  
 `sm plugins load viprespawn`
 
+To mod the plugin you will need the `colors` include.
+
 ## Configuration
 The config-file is located in `root/csgo/cfg/sourcemod/viprespawns.cfg`. In there you can change some options. For now, you can only change the amount of respawns per map is allowed.
 
