@@ -4,20 +4,22 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
+#define VERSION "1.5"
 
 int Number;
 int RespawnNumber[32];
-int RespawnLeft;
+int RespawnLeft[32];
 
 ConVar g_cvNumber;
 ConVar g_cvFlag;
 ConVar g_cvMenu;
+ConVar g_cvVIPVersion;
 
 public Plugin myinfo = {
 	name = "VIPRespawns",
 	author = "BaroNN & Hypr",
 	description = "Gives VIP players some respawns per map.",
-	version = "1.4",
+	version = VERSION,
 	url = "https://github.com/condolent/viprespawns"
 };
 
@@ -26,8 +28,8 @@ public void OnPluginStart() {
 	g_cvFlag = CreateConVar("respawn_flag", "ADMFLAG_RESERVATION", "Users with this flag are allowed to use the respawn command.\n Correct flagnames needs to be used: http://bit.ly/2rFMTtW");
 	g_cvNumber = CreateConVar("respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
 	g_cvMenu = CreateConVar("enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
+	g_cvVIPVersion = CreateConVar("viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
 	Number = g_cvNumber.IntValue;
-	RespawnLeft = Number;
 	
 	AutoExecConfig(true, "viprespawns");
 	RegAdminCmd("sm_vipspawn", sm_vipspawn, g_cvFlag.Flags);
@@ -89,7 +91,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 					if(RespawnNumber[client] < Number) {
 						CS_RespawnPlayer(client);
 						RespawnNumber[client] += 1;
-						RespawnLeft -= 1;
+						RespawnLeft[client] -= 1;
 						CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);	
 					} else {
 						CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
@@ -137,7 +139,7 @@ public Action sm_vipspawn(int client, int args) {
 			
 			CS_RespawnPlayer(client);
 			RespawnNumber[client] += 1;
-			RespawnLeft -= 1;
+			RespawnLeft[client] -= 1;
 			CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);
 			
 		} else {
@@ -152,6 +154,7 @@ public Action sm_vipspawn(int client, int args) {
 public Action Event_Start(Handle sEvent, const char[] Name, bool DontBroadcast) {
 	int client = GetClientOfUserId(GetEventInt(sEvent, "userid"));
 	RespawnNumber[client] = 0;
+	RespawnLeft[client] = Number;
 }
 
 public void OnConfigsExecuted() {
