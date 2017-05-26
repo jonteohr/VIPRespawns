@@ -14,7 +14,7 @@ ConVar g_cvFlag;
 ConVar g_cvMenu;
 
 public Plugin myinfo = {
-	name = "TP VIPRespawns",
+	name = "VIPRespawns",
 	author = "BaroNN & Hypr",
 	description = "Gives VIP players some respawns per map.",
 	version = "1.4",
@@ -49,7 +49,7 @@ public Action sm_vip(int client, int args) {
 	Format(buff, sizeof(buff), "Respawns left: %d", RespawnLeft);
 	
 	Menu menu = new Menu(MenuHandler1, MENU_ACTIONS_ALL);
-	menu.SetTitle("TrinityPlay VIP");
+	menu.SetTitle("VIP Menu");
 	menu.AddItem(CHOICE1, "Respawn");
 	menu.AddItem(CHOICE2, buff, ITEMDRAW_DISABLED);
 	menu.Display(client, 20);
@@ -67,7 +67,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 		
 		case MenuAction_Start:
 		{
-			//CPrintToChat(client, "[{green}TrinityPlay{default}] Opening menu...");
+			//CPrintToChat(client, "[{green}VIPRespawns{default}] Opening menu...");
 		}
 		case MenuAction_Display:
 		{
@@ -76,7 +76,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 			
 			Panel panel = view_as<Panel>(param2);
 			panel.SetTitle(buffer);
-			//CPrintToChat(client, "[{green}TrinityPlay{default}] Client %d was sent menu with panel %x", name, param2);
+			//CPrintToChat(client, "[{green}VIPRespawns{default}] Client %d was sent menu with panel %x", name, param2);
 		}
 		case MenuAction_Select:
 		{
@@ -90,12 +90,12 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 						CS_RespawnPlayer(client);
 						RespawnNumber[client] += 1;
 						RespawnLeft -= 1;
-						CPrintToChatAll("[{green}TrinityPlay{default}] %s used a Respawn!", name);	
+						CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);	
 					} else {
-						CPrintToChat(client, "[{green}TrinityPlay{default}] You have used all your respawns!");
+						CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
 					}
 				} else {
-					CPrintToChat(client, "[{green}TrinityPlay{default}] You cannot respawn when alive!");
+					CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 				}
 			} else {
 				// Print to server console if someone actually managed to select this option somehow.. (Debugging purposes)
@@ -121,7 +121,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 
 public Action sm_spawnsleft(int client, int args) {
 	
-	CPrintToChat(client, "[{green}TrinityPlay{default}] You have %d respawns left!", RespawnLeft);
+	CPrintToChat(client, "[{green}VIPRespawns{default}] You have %d respawns left!", RespawnLeft);
 }
 
 public Action sm_vipspawn(int client, int args) {
@@ -138,14 +138,14 @@ public Action sm_vipspawn(int client, int args) {
 			CS_RespawnPlayer(client);
 			RespawnNumber[client] += 1;
 			RespawnLeft -= 1;
-			CPrintToChatAll("[{green}TrinityPlay{default}] %s used a Respawn!", name);
+			CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);
 			
 		} else {
-			CPrintToChat(client, "[{green}TrinityPlay{default}] You have used all your respawns!");
+			CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
 		}
 		
 	} else {
-		CPrintToChat(client, "[{green}TrinityPlay{default}] You cannot respawn when alive!");
+		CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 	}
 }
 
