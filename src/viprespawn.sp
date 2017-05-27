@@ -4,11 +4,11 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
-#define VERSION "1.5"
+#define VERSION "1.5.2"
 
 int Number;
-int RespawnNumber[32];
-int RespawnLeft[32];
+int RespawnNumber[MAXPLAYERS +1];
+int RespawnLeft[MAXPLAYERS +1];
 
 ConVar g_cvNumber;
 ConVar g_cvFlag;
@@ -17,7 +17,7 @@ ConVar g_cvVIPVersion;
 
 public Plugin myinfo = {
 	name = "VIPRespawns",
-	author = "BaroNN & Hypr",
+	author = "Hypr & BaroNN",
 	description = "Gives VIP players some respawns per map.",
 	version = VERSION,
 	url = "https://github.com/condolent/viprespawns"
@@ -34,7 +34,6 @@ public void OnPluginStart() {
 	AutoExecConfig(true, "viprespawns");
 	RegAdminCmd("sm_vipspawn", sm_vipspawn, g_cvFlag.Flags);
 	RegAdminCmd("sm_spawnsleft", sm_spawnsleft, g_cvFlag.Flags);
-	HookEvent("round_start", Event_Start);
 	
 	// Menu
 	if(g_cvMenu.IntValue == 1) {
@@ -44,11 +43,21 @@ public void OnPluginStart() {
 	}
 }
 
+public void OnMapStart() {
+	
+	for(new i = 1; i <= MaxClients;  i++) {
+		
+		RespawnNumber[i] = 0;
+		RespawnLeft[i] = Number;
+	}
+	
+}
+
 // !vip
 public Action sm_vip(int client, int args) {
 	
 	char buff[128];
-	Format(buff, sizeof(buff), "Respawns left: %d", RespawnLeft);
+	Format(buff, sizeof(buff), "Respawns left: %d", RespawnLeft[client]);
 	
 	Menu menu = new Menu(MenuHandler1, MENU_ACTIONS_ALL);
 	menu.SetTitle("VIP Menu");
@@ -85,21 +94,26 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 			char info[32];
 			menu.GetItem(param2, info, sizeof(info));
 			if(StrEqual(info, CHOICE1)) {
-				// Just make sure player is alive
-				if(!IsPlayerAlive(client)) {
-					// Has player reached the respawn limit? If not, execute!
-					if(RespawnNumber[client] < Number) {
-						CS_RespawnPlayer(client);
-						RespawnNumber[client] += 1;
-						RespawnLeft[client] -= 1;
-						CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);	
+				if(GetClientTeam(client) != CS_TEAM_SPECTATOR) {
+					// Just make sure player is alive
+					if(!IsPlayerAlive(client)) {
+						// Has player reached the respawn limit? If not, execute!
+						if(RespawnNumber[client] < Number) {
+							CS_RespawnPlayer(client);
+							RespawnNumber[client] += 1;
+							RespawnLeft[client] -= 1;
+							CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);	
+						} else {
+							CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+						}
 					} else {
-						CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+						CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 					}
 				} else {
-					CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
+					CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn as spectator..");
 				}
-			} else {
+			} 
+			if(StrEqual(info, CHOICE2)) {
 				// Print to server console if someone actually managed to select this option somehow.. (Debugging purposes)
 				PrintToServer("Client %d selected %s even though it's disabled..", name, info);
 			}
@@ -123,7 +137,9 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 
 public Action sm_spawnsleft(int client, int args) {
 	
-	CPrintToChat(client, "[{green}VIPRespawns{default}] You have %d respawns left!", RespawnLeft);
+	CPrintToChat(client, "[{green}VIPRespawns{default}] You have %d respawns left!", RespawnLeft[client]);
+	
+	return Plugin_Handled;
 }
 
 public Action sm_vipspawn(int client, int args) {
@@ -131,30 +147,30 @@ public Action sm_vipspawn(int client, int args) {
 	char name[MAX_NAME_LENGTH];
 	GetClientName(client, name, sizeof(name));
 	
-	// Make sure client is alive
-	if (!IsPlayerAlive(client)) {
-		
-		// Check how many times client has respawned
-		if(RespawnNumber[client] < Number) {
+	if(GetClientTeam(client) != CS_TEAM_SPECTATOR) {
+		// Make sure client is alive
+		if (!IsPlayerAlive(client)) {
 			
-			CS_RespawnPlayer(client);
-			RespawnNumber[client] += 1;
-			RespawnLeft[client] -= 1;
-			CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);
+			// Check how many times client has respawned
+			if(RespawnNumber[client] < Number) {
+				
+				CS_RespawnPlayer(client);
+				RespawnNumber[client] += 1;
+				RespawnLeft[client] -= 1;
+				CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);
+				
+			} else {
+				CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+			}
 			
 		} else {
-			CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+			CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 		}
-		
 	} else {
-		CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
+		CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn as spectator..");
 	}
-}
-
-public Action Event_Start(Handle sEvent, const char[] Name, bool DontBroadcast) {
-	int client = GetClientOfUserId(GetEventInt(sEvent, "userid"));
-	RespawnNumber[client] = 0;
-	RespawnLeft[client] = Number;
+	
+	return Plugin_Handled;
 }
 
 public void OnConfigsExecuted() {
