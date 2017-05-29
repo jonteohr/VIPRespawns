@@ -3,7 +3,7 @@ Sourcemod plugin for CS:GO. Allowing players with A-flag respawn x times per map
 [AlliedMods](https://forums.alliedmods.net/showthread.php?p=2523408#post2523408)
 
 ## Usage
-Players with the `a`-flag gets (per default) 3 respawns per map.  
+Players with the `a`-flag gets 3 respawns per map.  
 To respawn, you simply use the command `!vipspawn` when dead.  
 You can also check how many respawns you have left via `!spawnsleft`.  
 A menu available via `!vip`, as long as it has not been disabled in config.
@@ -20,7 +20,7 @@ Then execute command in server console:
 To mod the plugin you will need the `colors` include.
 
 ## Configuration
-The config-file is located in `root/csgo/cfg/sourcemod/viprespawns.cfg`. In there you can change some options. For now, you can only change the amount of respawns per map is allowed.
+The config-file is located in `root/csgo/cfg/sourcemod/viprespawns.cfg`. In there you can change some options.
 
 This is how the config looks like:
 ```
@@ -39,12 +39,6 @@ enable_vip_menu "1"
 // -
 // Default: "3"
 respawn_amount "3"
-
-// Users with this flag are allowed to use the respawn command.
-// Correct flagnames needs to be used: http://bit.ly/2rFMTtW
-// -
-// Default: "ADMFLAG_RESERVATION"
-respawn_flag "ADMFLAG_RESERVATION"
 ```
 
 
