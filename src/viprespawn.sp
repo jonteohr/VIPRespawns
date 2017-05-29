@@ -4,14 +4,13 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
-#define VERSION "1.5.2"
+#define VERSION "1.5.3"
 
 int Number;
 int RespawnNumber[MAXPLAYERS +1];
 int RespawnLeft[MAXPLAYERS +1];
 
 ConVar g_cvNumber;
-ConVar g_cvFlag;
 ConVar g_cvMenu;
 ConVar g_cvVIPVersion;
 
@@ -25,19 +24,18 @@ public Plugin myinfo = {
 
 public void OnPluginStart() {
 	
-	g_cvFlag = CreateConVar("respawn_flag", "ADMFLAG_RESERVATION", "Users with this flag are allowed to use the respawn command.\n Correct flagnames needs to be used: http://bit.ly/2rFMTtW");
 	g_cvNumber = CreateConVar("respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
 	g_cvMenu = CreateConVar("enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
 	g_cvVIPVersion = CreateConVar("viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
 	Number = g_cvNumber.IntValue;
 	
 	AutoExecConfig(true, "viprespawns");
-	RegAdminCmd("sm_vipspawn", sm_vipspawn, g_cvFlag.Flags);
-	RegAdminCmd("sm_spawnsleft", sm_spawnsleft, g_cvFlag.Flags);
+	RegAdminCmd("sm_vipspawn", sm_vipspawn, ADMFLAG_RESERVATION);
+	RegAdminCmd("sm_spawnsleft", sm_spawnsleft, ADMFLAG_RESERVATION);
 	
 	// Menu
 	if(g_cvMenu.IntValue == 1) {
-		RegAdminCmd("sm_vip", sm_vip, g_cvFlag.Flags);
+		RegAdminCmd("sm_vip", sm_vip, ADMFLAG_RESERVATION);
 	} else {
 		PrintToServer("Someone tried opening the VIP-menu, but it's disabled in the config!");
 	}
