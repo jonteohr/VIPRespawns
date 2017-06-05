@@ -33,12 +33,18 @@ This is how the config looks like:
 // Default: "1"
 // Minimum: "0.000000"
 // Maximum: "1.000000"
-enable_vip_menu "1"
+sm_enable_vip_menu "1"
 
 // Amount of times a user is allowed to respawn per map
 // -
 // Default: "3"
-respawn_amount "3"
+sm_respawn_amount "3"
+
+// How many players needs to be alive in order to respawn
+// Set 0 to allow all the time.
+// - 
+// Default: "3"
+sm_minimum_players_alive "3"
 ```
 
 
