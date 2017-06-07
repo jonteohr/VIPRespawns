@@ -4,7 +4,7 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
-#define VERSION "1.5.5"
+#define VERSION "1.5.6"
 
 int Number;
 int RespawnNumber[MAXPLAYERS +1];
@@ -15,7 +15,7 @@ ConVar cvNumber;
 ConVar cvMenu;
 ConVar cvVIPVersion;
 ConVar cvAlive;
-ConVar cvAliveT;
+ConVar cvAliveSide;
 
 public Plugin myinfo = {
 	name = "VIPRespawns",
@@ -31,7 +31,7 @@ public void OnPluginStart() {
 	cvMenu = CreateConVar("sm_enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
 	cvVIPVersion = CreateConVar("sm_viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
 	cvAlive = CreateConVar("sm_minimum_players_alive", "3", "How many players needs to be alive in order to respawn\nSet 0 to allow all the time.");
-	cvAliveT = CreateConVar("sm_minimum_players_alive_tsided", "0", "Should the sm_minimum_players_alive only count players playing on the Terrorist side?\n0 = Disable. 1 = Enable.", _, true, 0.0, true, 1.0);
+	cvAliveSide = CreateConVar("sm_minimum_players_alive_side", "0", "Should the sm_minimum_players_alive only count players playing on a specific side?\n0 = Disable. 1 = Track terrorists. 2 = Track counter-terrorists.");
 	Number = cvNumber.IntValue;
 	
 	AutoExecConfig(true, "viprespawns");
@@ -101,15 +101,21 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 			
 			if(StrEqual(info, CHOICE1)) {
 				
-				if(cvAliveT.IntValue == 0) {
+				if(cvAliveSide.IntValue == 0) {
 					for(new i=1; i<=MaxClients; i++) {
 						if(IsClientInGame(i) && IsPlayerAlive(i)) {
 							AlivePlayers++;
 						}
 					}
-				} else if(cvAliveT.IntValue == 1) {
+				} else if(cvAliveSide.IntValue == 1) {
 					for(new i=1; i<=MaxClients; i++) {
 						if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_T) {
+							AlivePlayers++;
+						}
+					}
+				} else if(cvAliveSide.IntValue == 2) {
+					for(new i=1; i<=MaxClients; i++) {
+						if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_CT) {
 							AlivePlayers++;
 						}
 					}
@@ -131,9 +137,10 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 						} else {
 							CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 						}
-					} else if(AlivePlayers < cvAlive.IntValue) {
+					} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
 						CPrintToChat(client, "[{green}VIPRespawns{default}] Not enough players alive. 3 players needs to be alive!");
-					} else if(cvAlive.IntValue == 0) {
+					} 
+					if(cvAlive.IntValue == 0) {
 						// Make sure client is alive
 						if (!IsPlayerAlive(client)) {
 							
@@ -188,15 +195,21 @@ public Action sm_spawnsleft(int client, int args) {
 
 public Action sm_vipspawn(int client, int args) {
 	
-	if(cvAliveT.IntValue == 0) {
+	if(cvAliveSide.IntValue == 0) {
 		for(new i=1; i<=MaxClients; i++) {
 			if(IsClientInGame(i) && IsPlayerAlive(i)) {
 				AlivePlayers++;
 			}
 		}
-	} else if(cvAliveT.IntValue == 1) {
+	} else if(cvAliveSide.IntValue == 1) {
 		for(new i=1; i<=MaxClients; i++) {
 			if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_T) {
+				AlivePlayers++;
+			}
+		}
+	} else if(cvAliveSide.IntValue == 2) {
+		for(new i=1; i<=MaxClients; i++) {
+			if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_CT) {
 				AlivePlayers++;
 			}
 		}
@@ -225,9 +238,10 @@ public Action sm_vipspawn(int client, int args) {
 			} else {
 				CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 			}
-		} else if(AlivePlayers < cvAlive.IntValue) {
+		} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
 			CPrintToChat(client, "[{green}VIPRespawns{default}] Not enough players alive. 3 players needs to be alive!");
-		} else if(cvAlive.IntValue == 0) {
+		} 
+		if(cvAlive.IntValue == 0) {
 			// Make sure client is alive
 			if (!IsPlayerAlive(client)) {
 				
