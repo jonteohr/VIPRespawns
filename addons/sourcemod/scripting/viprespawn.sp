@@ -1,3 +1,18 @@
+/*
+* ###########################################
+* #											#
+* #				 VIPRespawns				#
+* #				   v1.5.6					#
+* #											#
+* ###########################################
+* 
+* TEAM VARIABLES
+* CS_TEAM_NONE
+* CS_TEAM_SPECTATOR
+* CS_TEAM_T
+* CS_TEAM_CT
+*/
+
 #include <sourcemod>
 #include <colors>
 #include <cstrike>
@@ -31,7 +46,7 @@ public void OnPluginStart() {
 	cvMenu = CreateConVar("sm_enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
 	cvVIPVersion = CreateConVar("sm_viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
 	cvAlive = CreateConVar("sm_minimum_players_alive", "3", "How many players needs to be alive in order to respawn\nSet 0 to allow all the time.");
-	cvAliveSide = CreateConVar("sm_minimum_players_alive_side", "0", "Should the sm_minimum_players_alive only count players playing on a specific side?\n0 = Disable. 1 = Track terrorists. 2 = Track counter-terrorists.");
+	cvAliveSide = CreateConVar("sm_minimum_players_alive_side", "0", "Counter-Strike only!\nShould the sm_minimum_players_alive only count players playing on a specific side?\n0 = Disable. 1 = Track terrorists. 2 = Track counter-terrorists.");
 	Number = cvNumber.IntValue;
 	
 	AutoExecConfig(true, "viprespawns");
