@@ -4,17 +4,18 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
-#define VERSION "1.5.4"
+#define VERSION "1.5.5"
 
 int Number;
 int RespawnNumber[MAXPLAYERS +1];
 int RespawnLeft[MAXPLAYERS +1];
 int AlivePlayers;
 
-ConVar g_cvNumber;
-ConVar g_cvMenu;
-ConVar g_cvVIPVersion;
-ConVar g_cvAlive;
+ConVar cvNumber;
+ConVar cvMenu;
+ConVar cvVIPVersion;
+ConVar cvAlive;
+ConVar cvAliveT;
 
 public Plugin myinfo = {
 	name = "VIPRespawns",
@@ -26,18 +27,19 @@ public Plugin myinfo = {
 
 public void OnPluginStart() {
 	
-	g_cvNumber = CreateConVar("sm_respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
-	g_cvMenu = CreateConVar("sm_enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
-	g_cvVIPVersion = CreateConVar("sm_viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
-	g_cvAlive = CreateConVar("sm_minimum_players_alive", "3", "How many players needs to be alive in order to respawn\nSet 0 to allow all the time.");
-	Number = g_cvNumber.IntValue;
+	cvNumber = CreateConVar("sm_respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
+	cvMenu = CreateConVar("sm_enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
+	cvVIPVersion = CreateConVar("sm_viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
+	cvAlive = CreateConVar("sm_minimum_players_alive", "3", "How many players needs to be alive in order to respawn\nSet 0 to allow all the time.");
+	cvAliveT = CreateConVar("sm_minimum_players_alive_tsided", "0", "Should the sm_minimum_players_alive only count players playing on the Terrorist side?\n0 = Disable. 1 = Enable.", _, true, 0.0, true, 1.0);
+	Number = cvNumber.IntValue;
 	
 	AutoExecConfig(true, "viprespawns");
 	RegAdminCmd("sm_vipspawn", sm_vipspawn, ADMFLAG_RESERVATION);
 	RegAdminCmd("sm_spawnsleft", sm_spawnsleft, ADMFLAG_RESERVATION);
 	
 	// Menu
-	if(g_cvMenu.IntValue == 1) {
+	if(cvMenu.IntValue == 1) {
 		RegAdminCmd("sm_vip", sm_vip, ADMFLAG_RESERVATION);
 	} else {
 		PrintToServer("Someone tried opening the VIP-menu, but it's disabled in the config!");
@@ -96,16 +98,25 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 		{
 			char info[32];
 			menu.GetItem(param2, info, sizeof(info));
+			
 			if(StrEqual(info, CHOICE1)) {
 				
-				for(new i=1; i<=MaxClients; i++) {
-					if(IsClientInGame(i) && IsPlayerAlive(i)) {
-						AlivePlayers++;
+				if(cvAliveT.IntValue == 0) {
+					for(new i=1; i<=MaxClients; i++) {
+						if(IsClientInGame(i) && IsPlayerAlive(i)) {
+							AlivePlayers++;
+						}
+					}
+				} else if(cvAliveT.IntValue == 1) {
+					for(new i=1; i<=MaxClients; i++) {
+						if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_T) {
+							AlivePlayers++;
+						}
 					}
 				}
 				
 				if(GetClientTeam(client) != CS_TEAM_SPECTATOR) {
-					if(g_cvAlive.IntValue != 0 && AlivePlayers >= g_cvAlive.IntValue) {
+					if(cvAlive.IntValue != 0 && AlivePlayers >= cvAlive.IntValue) {
 						// Just make sure player is alive
 						if(!IsPlayerAlive(client)) {
 							// Has player reached the respawn limit? If not, execute!
@@ -120,9 +131,9 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 						} else {
 							CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 						}
-					} else if(AlivePlayers < g_cvAlive.IntValue) {
+					} else if(AlivePlayers < cvAlive.IntValue) {
 						CPrintToChat(client, "[{green}VIPRespawns{default}] Not enough players alive. 3 players needs to be alive!");
-					} else if(g_cvAlive.IntValue == 0) {
+					} else if(cvAlive.IntValue == 0) {
 						// Make sure client is alive
 						if (!IsPlayerAlive(client)) {
 							
@@ -177,9 +188,17 @@ public Action sm_spawnsleft(int client, int args) {
 
 public Action sm_vipspawn(int client, int args) {
 	
-	for(new i=1; i<=MaxClients; i++) {
-		if(IsClientInGame(i) && IsPlayerAlive(i)) {
-			AlivePlayers++;
+	if(cvAliveT.IntValue == 0) {
+		for(new i=1; i<=MaxClients; i++) {
+			if(IsClientInGame(i) && IsPlayerAlive(i)) {
+				AlivePlayers++;
+			}
+		}
+	} else if(cvAliveT.IntValue == 1) {
+		for(new i=1; i<=MaxClients; i++) {
+			if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_T) {
+				AlivePlayers++;
+			}
 		}
 	}
 	
@@ -187,7 +206,7 @@ public Action sm_vipspawn(int client, int args) {
 	GetClientName(client, name, sizeof(name));
 	
 	if(GetClientTeam(client) != CS_TEAM_SPECTATOR) {
-		if(g_cvAlive.IntValue != 0 && AlivePlayers >= g_cvAlive.IntValue) {
+		if(cvAlive.IntValue != 0 && AlivePlayers >= cvAlive.IntValue) {
 			// Make sure client is alive
 			if (!IsPlayerAlive(client)) {
 				
@@ -206,9 +225,9 @@ public Action sm_vipspawn(int client, int args) {
 			} else {
 				CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
 			}
-		} else if(AlivePlayers < g_cvAlive.IntValue) {
+		} else if(AlivePlayers < cvAlive.IntValue) {
 			CPrintToChat(client, "[{green}VIPRespawns{default}] Not enough players alive. 3 players needs to be alive!");
-		} else if(g_cvAlive.IntValue == 0) {
+		} else if(cvAlive.IntValue == 0) {
 			// Make sure client is alive
 			if (!IsPlayerAlive(client)) {
 				
