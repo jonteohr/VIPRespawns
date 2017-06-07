@@ -45,6 +45,14 @@ sm_respawn_amount "3"
 // - 
 // Default: "3"
 sm_minimum_players_alive "3"
+
+// Should the sm_minimum_players_alive only count players playing on the Terrorist side?
+// 0 = Disable. 1 = Enable.
+// -
+// Default: "0"
+// Minimum: "0.000000"
+// Maximum: "1.000000"
+sm_minimum_players_alive_tsided "0"
 ```
 
 
