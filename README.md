@@ -17,7 +17,7 @@ Simply download the `viprespawn.smx` file via the link above and drag the file t
 Then execute command in server console:  
 `sm plugins load viprespawn`
 
-To mod the plugin you will need the `colors` include.
+To mod the plugin you will need the [colors](https://forums.alliedmods.net/showthread.php?t=96831) include.
 
 ## Configuration
 The config-file is located in `root/csgo/cfg/sourcemod/viprespawns.cfg`. In there you can change some options.
