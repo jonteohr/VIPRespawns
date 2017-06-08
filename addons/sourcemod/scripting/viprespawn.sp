@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (002)				#
+* #				   v1.5.7 (003)				#
 * #											#
 * ###########################################
 * 
@@ -20,7 +20,7 @@
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
 
-#define VERSION "1.5.7 (002)"
+#define VERSION "1.5.7 (003)"
 #define prefix "[{green}VIPRespawns{default}]"
 
 int Number;
@@ -102,7 +102,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 		
 		case MenuAction_Start:
 		{
-			//CPrintToChat(client, "%p Opening menu...", prefix);
+			// Menu opened
 		}
 		case MenuAction_Display:
 		{
@@ -111,7 +111,6 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 			
 			Panel panel = view_as<Panel>(param2);
 			panel.SetTitle(buffer);
-			//CPrintToChat(client, "%p Client %d was sent menu with panel %x", prefix, name, param2);
 		}
 		case MenuAction_Select:
 		{
@@ -291,6 +290,10 @@ public Action sm_vipspawn(int client, int args) {
 public Action sm_checkrespawn(int client, int args) {
 	
 	CPrintToChat(client, "%p This command does not fulfill a purpose as of yet..", prefix);
+	
+	/*
+	* TODO: Make command argument[0] to convert to userID and lookup available respawns.
+	*/
 	
 }
 
