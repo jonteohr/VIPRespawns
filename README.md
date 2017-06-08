@@ -1,5 +1,5 @@
 # VIPRespawns [![Chat on Gitter](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/VIPRespawns/Lobby) [![Releases](https://img.shields.io/badge/release-1.5.6-orange.svg)](https://github.com/condolent/VIPRespawns/releases)
-Sourcemod plugin for CS:GO. Allowing players with A-flag respawn x times per map!  
+Sourcemod plugin. Allowing players with A-flag respawn x times per map!  
 [AlliedMods](https://forums.alliedmods.net/showthread.php?p=2523408#post2523408)
 
 ## Usage
