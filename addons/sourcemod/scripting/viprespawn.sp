@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (001)				#
+* #				   v1.5.7 (002)				#
 * #											#
 * ###########################################
 * 
@@ -19,14 +19,16 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
-#define VERSION "1.5.7 (001)"
+
+#define VERSION "1.5.7 (002)"
+#define prefix "[{green}VIPRespawns{default}]"
 
 int Number;
 int RespawnNumber[MAXPLAYERS +1];
 int RespawnLeft[MAXPLAYERS +1];
 int AlivePlayers;
 
-new String:prefix[] = "[{green}VIPRespawns{default}]";
+//new String:prefix[] = "[{green}VIPRespawns{default}]";
 
 ConVar cvNumber;
 ConVar cvMenu;
@@ -48,7 +50,7 @@ public void OnPluginStart() {
 	cvMenu = CreateConVar("sm_enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
 	cvVIPVersion = CreateConVar("sm_viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
 	cvAlive = CreateConVar("sm_minimum_players_alive", "3", "How many players needs to be alive in order to respawn\nSet 0 to allow all the time.");
-	cvAliveSide = CreateConVar("sm_minimum_players_alive_side", "0", "Counter-Strike only!\nShould the sm_minimum_players_alive only count players playing on a specific side?\n0 = Disable. 1 = Track terrorists. 2 = Track counter-terrorists.");
+	cvAliveSide = CreateConVar("sm_minimum_players_alive_side", "0", "Counter-Strike only!\nShould the sm_minimum_players_alive only count players playing on a specific side?\n0 = Track all teams. 1 = Track terrorists. 2 = Track counter-terrorists.");
 	
 	Number = cvNumber.IntValue;
 	
