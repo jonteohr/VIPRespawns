@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.6					#
+* #				   v1.5.7 (001)				#
 * #											#
 * ###########################################
 * 
@@ -19,12 +19,14 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
-#define VERSION "1.5.6"
+#define VERSION "1.5.7 (001)"
 
 int Number;
 int RespawnNumber[MAXPLAYERS +1];
 int RespawnLeft[MAXPLAYERS +1];
 int AlivePlayers;
+
+new String:prefix[] = "[{green}VIPRespawns{default}]";
 
 ConVar cvNumber;
 ConVar cvMenu;
@@ -47,17 +49,17 @@ public void OnPluginStart() {
 	cvVIPVersion = CreateConVar("sm_viprespawn_version", VERSION, "The version of VIPRespawns you're running.", FCVAR_DONTRECORD);
 	cvAlive = CreateConVar("sm_minimum_players_alive", "3", "How many players needs to be alive in order to respawn\nSet 0 to allow all the time.");
 	cvAliveSide = CreateConVar("sm_minimum_players_alive_side", "0", "Counter-Strike only!\nShould the sm_minimum_players_alive only count players playing on a specific side?\n0 = Disable. 1 = Track terrorists. 2 = Track counter-terrorists.");
+	
 	Number = cvNumber.IntValue;
 	
 	AutoExecConfig(true, "viprespawns");
 	RegAdminCmd("sm_vipspawn", sm_vipspawn, ADMFLAG_RESERVATION);
 	RegAdminCmd("sm_spawnsleft", sm_spawnsleft, ADMFLAG_RESERVATION);
+	RegAdminCmd("sm_checkrespawn", sm_checkrespawn, ADMFLAG_KICK);
 	
 	// Menu
 	if(cvMenu.IntValue == 1) {
 		RegAdminCmd("sm_vip", sm_vip, ADMFLAG_RESERVATION);
-	} else {
-		PrintToServer("Someone tried opening the VIP-menu, but it's disabled in the config!");
 	}
 }
 
@@ -98,7 +100,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 		
 		case MenuAction_Start:
 		{
-			//CPrintToChat(client, "[{green}VIPRespawns{default}] Opening menu...");
+			//CPrintToChat(client, "%p Opening menu...", prefix);
 		}
 		case MenuAction_Display:
 		{
@@ -107,7 +109,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 			
 			Panel panel = view_as<Panel>(param2);
 			panel.SetTitle(buffer);
-			//CPrintToChat(client, "[{green}VIPRespawns{default}] Client %d was sent menu with panel %x", name, param2);
+			//CPrintToChat(client, "%p Client %d was sent menu with panel %x", prefix, name, param2);
 		}
 		case MenuAction_Select:
 		{
@@ -145,15 +147,15 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 								CS_RespawnPlayer(client);
 								RespawnNumber[client] += 1;
 								RespawnLeft[client] -= 1;
-								CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);	
+								CPrintToChatAll("%p %s used a Respawn!", prefix, name);	
 							} else {
-								CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+								CPrintToChat(client, "%p You have used all your respawns!", prefix);
 							}
 						} else {
-							CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
+							CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
 						}
 					} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
-						CPrintToChat(client, "[{green}VIPRespawns{default}] Not enough players alive. 3 players needs to be alive!");
+						CPrintToChat(client, "%p Not enough players alive. 3 players needs to be alive!", prefix);
 					} 
 					if(cvAlive.IntValue == 0) {
 						// Make sure client is alive
@@ -165,18 +167,18 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 								CS_RespawnPlayer(client);
 								RespawnNumber[client] += 1;
 								RespawnLeft[client] -= 1;
-								CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);
+								CPrintToChatAll("%p %s used a Respawn!", prefix, name);
 								
 							} else {
-								CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+								CPrintToChat(client, "%p You have used all your respawns!", prefix);
 							}
 							
 						} else {
-							CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
+							CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
 						}
 					}
 				} else {
-					CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn as spectator..");
+					CPrintToChat(client, "%p You cannot respawn as spectator..", prefix);
 				}
 			} 
 			if(StrEqual(info, CHOICE2)) {
@@ -203,7 +205,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 
 public Action sm_spawnsleft(int client, int args) {
 	
-	CPrintToChat(client, "[{green}VIPRespawns{default}] You have %d respawns left!", RespawnLeft[client]);
+	CPrintToChat(client, "%p You have %d respawns left!", prefix, RespawnLeft[client]);
 	
 	return Plugin_Handled;
 }
@@ -244,17 +246,17 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);
+					CPrintToChatAll("%p %s used a Respawn!", prefix, name);
 					
 				} else {
-					CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+					CPrintToChat(client, "%p You have used all your respawns!", prefix);
 				}
 				
 			} else {
-				CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
+				CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
 			}
 		} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
-			CPrintToChat(client, "[{green}VIPRespawns{default}] Not enough players alive. 3 players needs to be alive!");
+			CPrintToChat(client, "%p Not enough players alive. 3 players needs to be alive!", prefix);
 		} 
 		if(cvAlive.IntValue == 0) {
 			// Make sure client is alive
@@ -266,21 +268,28 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("[{green}VIPRespawns{default}] %s used a Respawn!", name);
+					CPrintToChatAll("%p %s used a Respawn!", prefix, name);
 					
 				} else {
-					CPrintToChat(client, "[{green}VIPRespawns{default}] You have used all your respawns!");
+					CPrintToChat(client, "%p You have used all your respawns!", prefix);
 				}
 				
 			} else {
-				CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn when alive!");
+				CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
 			}
 		}
 	} else {
-		CPrintToChat(client, "[{green}VIPRespawns{default}] You cannot respawn as spectator..");
+		CPrintToChat(client, "%p You cannot respawn as spectator..", prefix);
 	}
 	
 	return Plugin_Handled;
+}
+
+// !checkrespawn
+public Action sm_checkrespawn(int client, int args) {
+	
+	CPrintToChat(client, "%p This command does not fulfill a purpose as of yet..", prefix);
+	
 }
 
 public void OnConfigsExecuted() {
