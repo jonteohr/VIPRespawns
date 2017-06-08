@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (003)				#
+* #				   v1.5.7 (004)				#
 * #											#
 * ###########################################
 * 
@@ -20,7 +20,7 @@
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
 
-#define VERSION "1.5.7 (003)"
+#define VERSION "1.5.7 (004)"
 #define prefix "[{green}VIPRespawns{default}]"
 
 int Number;
@@ -119,68 +119,8 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 			
 			if(StrEqual(info, CHOICE1)) {
 				
-				if(cvAliveSide.IntValue == 0) {
-					for(new i=1; i<=MaxClients; i++) {
-						if(IsClientInGame(i) && IsPlayerAlive(i)) {
-							AlivePlayers++;
-						}
-					}
-				} else if(cvAliveSide.IntValue == 1) {
-					for(new i=1; i<=MaxClients; i++) {
-						if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_T) {
-							AlivePlayers++;
-						}
-					}
-				} else if(cvAliveSide.IntValue == 2) {
-					for(new i=1; i<=MaxClients; i++) {
-						if(IsClientInGame(i) && IsPlayerAlive(i) && GetClientTeam(i) == CS_TEAM_CT) {
-							AlivePlayers++;
-						}
-					}
-				}
+				FakeClientCommand(client, "sm_vipspawn");
 				
-				if(GetClientTeam(client) != CS_TEAM_SPECTATOR) {
-					if(cvAlive.IntValue != 0 && AlivePlayers >= cvAlive.IntValue) {
-						// Just make sure player is alive
-						if(!IsPlayerAlive(client)) {
-							// Has player reached the respawn limit? If not, execute!
-							if(RespawnNumber[client] < Number) {
-								CS_RespawnPlayer(client);
-								RespawnNumber[client] += 1;
-								RespawnLeft[client] -= 1;
-								CPrintToChatAll("%p %s used a Respawn!", prefix, name);	
-							} else {
-								CPrintToChat(client, "%p You have used all your respawns!", prefix);
-							}
-						} else {
-							CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
-						}
-					} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
-						CPrintToChat(client, "%p Not enough players alive. 3 players needs to be alive!", prefix);
-					} 
-					if(cvAlive.IntValue == 0) {
-						// Make sure client is alive
-						if (!IsPlayerAlive(client)) {
-							
-							// Check how many times client has respawned
-							if(RespawnNumber[client] < Number) {
-								
-								CS_RespawnPlayer(client);
-								RespawnNumber[client] += 1;
-								RespawnLeft[client] -= 1;
-								CPrintToChatAll("%p %s used a Respawn!", prefix, name);
-								
-							} else {
-								CPrintToChat(client, "%p You have used all your respawns!", prefix);
-							}
-							
-						} else {
-							CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
-						}
-					}
-				} else {
-					CPrintToChat(client, "%p You cannot respawn as spectator..", prefix);
-				}
 			} 
 			if(StrEqual(info, CHOICE2)) {
 				// Print to server console if someone actually managed to select this option somehow.. (Debugging purposes)
