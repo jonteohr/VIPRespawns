@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (006)				#
+* #				   v1.5.7 (007)				#
 * #											#
 * ###########################################
 * 
@@ -21,7 +21,7 @@
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
 
-#define VERSION "1.5.7 (006)"
+#define VERSION "1.5.7 (007)"
 #define prefix "[{green}VIPRespawns{default}]"
 
 #undef REQUIRE_PLUGIN
@@ -37,7 +37,7 @@ ConVar cvVIPVersion;
 ConVar cvAlive;
 ConVar cvAliveSide;
 
-new Handle:hAdminMenu = INVALID_HANDLE;
+new Handle:hAdminMenu = INVALID_HANDLE
 TopMenuObject obj_dmcommands;
 
 public Plugin myinfo = {
@@ -64,7 +64,7 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_checkrespawn", sm_checkrespawn, ADMFLAG_KICK);
 	
 	new Handle:topmenu;
-	if(LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null)) {
+	if (LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != INVALID_HANDLE)) {
 		OnAdminMenuReady(topmenu);
 	}
 	
@@ -261,7 +261,9 @@ public void OnConfigsExecuted() {
 	
 }
 
+
 // ######## MENU STUFF ########
+
 public OnLibraryRemoved(const String:name[]) {
 	if(StrEqual(name, "adminmenu")) {
 		hAdminMenu = INVALID_HANDLE;
@@ -278,9 +280,9 @@ public void OnAdminMenuReady(Handle:topmenu) {
 		return;
 	}
 	
-	hAdminMenu = Handle:topmenu;
+	hAdminMenu = topmenu;
 	
-	// TODO: Add stuff to the menu
+	AttachAdminMenu();
 	
 }
 
@@ -294,7 +296,7 @@ public void OnAdminMenuCreated(Handle:topmenu) {
 	
 }
 
-public void CategoryHandler(Handle:topmenu, TopMenuAction action, TopMenuObject object_id, int param, char[] buffer, int maxlength) {
+public void CategoryHandler(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, int param, char[] buffer, int maxlength) {
 	
 	if(action == TopMenuAction_DisplayTitle) {
 		Format(buffer, maxlength, "VIPRespawns:");
@@ -304,7 +306,7 @@ public void CategoryHandler(Handle:topmenu, TopMenuAction action, TopMenuObject 
 	
 }
 
-public void AttachAdminMenu() {
+AttachAdminMenu() {
 	
 	TopMenuObject player_commands = FindTopMenuCategory(hAdminMenu, ADMINMENU_PLAYERCOMMANDS);
 	
@@ -316,7 +318,7 @@ public void AttachAdminMenu() {
 	
 }
 
-public void AdminMenu_TestEntry(TopMenu topmenu, TopMenuAction action, TopMenuObject object_id, int client, char[] buffer, int maxlength) {
+public void AdminMenu_TestEntry(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, int client, char[] buffer, int maxlength) {
 	
 	if(action == TopMenuAction_DisplayOption) {
 		Format(buffer, maxlength, "Test!!");
