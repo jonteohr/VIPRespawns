@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (005)				#
+* #				   v1.5.7 (006)				#
 * #											#
 * ###########################################
 * 
@@ -21,7 +21,7 @@
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
 
-#define VERSION "1.5.7 (005)"
+#define VERSION "1.5.7 (006)"
 #define prefix "[{green}VIPRespawns{default}]"
 
 #undef REQUIRE_PLUGIN
@@ -239,9 +239,20 @@ public Action sm_checkrespawn(int client, int args) {
 	
 	CPrintToChat(client, "%p This command does not fulfill a purpose as of yet..", prefix);
 	
+	decl String:arg[32];
+	GetCmdArg(1, arg, sizeof(arg));
+	if(!strcmp(arg, "woot")) {
+		CPrintToChat(client, "%p Your first argument was %a", prefix, arg);
+	} else {
+		CPrintToChat(client, "%p Your first argument was not 'woot'. It was in fact %a", prefix, arg);
+	}
+	
 	/*
-	* TODO: Make command argument[0] to convert to userID and lookup available respawns.
+	* TODO:
+	* Run a for-loop checking all users. When there's a match; get the userID and check available respawns.
 	*/
+	
+	return Plugin_Handled;
 	
 }
 
