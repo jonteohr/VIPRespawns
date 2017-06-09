@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (004)				#
+* #				   v1.5.7 (005)				#
 * #											#
 * ###########################################
 * 
@@ -16,25 +16,29 @@
 #include <sourcemod>
 #include <colors>
 #include <cstrike>
+#include <adminmenu>
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
 
-#define VERSION "1.5.7 (004)"
+#define VERSION "1.5.7 (005)"
 #define prefix "[{green}VIPRespawns{default}]"
+
+#undef REQUIRE_PLUGIN
 
 int Number;
 int RespawnNumber[MAXPLAYERS +1];
 int RespawnLeft[MAXPLAYERS +1];
 int AlivePlayers;
 
-//new String:prefix[] = "[{green}VIPRespawns{default}]";
-
 ConVar cvNumber;
 ConVar cvMenu;
 ConVar cvVIPVersion;
 ConVar cvAlive;
 ConVar cvAliveSide;
+
+new Handle:hAdminMenu = INVALID_HANDLE;
+TopMenuObject obj_dmcommands;
 
 public Plugin myinfo = {
 	name = "VIPRespawns",
@@ -59,12 +63,16 @@ public void OnPluginStart() {
 	RegAdminCmd("sm_spawnsleft", sm_spawnsleft, ADMFLAG_RESERVATION);
 	RegAdminCmd("sm_checkrespawn", sm_checkrespawn, ADMFLAG_KICK);
 	
+	new Handle:topmenu;
+	if(LibraryExists("adminmenu") && ((topmenu = GetAdminTopMenu()) != null)) {
+		OnAdminMenuReady(topmenu);
+	}
+	
 	// Menu
 	if(cvMenu.IntValue == 1) {
 		RegAdminCmd("sm_vip", sm_vip, ADMFLAG_RESERVATION);
 	}
 }
-
 
 
 public void OnMapStart() {
@@ -237,6 +245,72 @@ public Action sm_checkrespawn(int client, int args) {
 	
 }
 
+// Useless method required for AutoExecConfig
 public void OnConfigsExecuted() {
+	
+}
+
+// ######## MENU STUFF ########
+public OnLibraryRemoved(const String:name[]) {
+	if(StrEqual(name, "adminmenu")) {
+		hAdminMenu = INVALID_HANDLE;
+	}
+}
+
+public void OnAdminMenuReady(Handle:topmenu) {
+	
+	if(obj_dmcommands == INVALID_TOPMENUOBJECT) {
+		OnAdminMenuCreated(topmenu);
+	}
+	
+	if(topmenu == hAdminMenu) {
+		return;
+	}
+	
+	hAdminMenu = Handle:topmenu;
+	
+	// TODO: Add stuff to the menu
+	
+}
+
+public void OnAdminMenuCreated(Handle:topmenu) {
+	
+	if(topmenu == hAdminMenu && obj_dmcommands != INVALID_TOPMENUOBJECT) {
+		return;
+	}
+	
+	obj_dmcommands = AddToTopMenu(topmenu, "VIPRespawns", TopMenuObject_Category, CategoryHandler, INVALID_TOPMENUOBJECT);
+	
+}
+
+public void CategoryHandler(Handle:topmenu, TopMenuAction action, TopMenuObject object_id, int param, char[] buffer, int maxlength) {
+	
+	if(action == TopMenuAction_DisplayTitle) {
+		Format(buffer, maxlength, "VIPRespawns:");
+	} else if(action == TopMenuAction_DisplayOption) {
+		Format(buffer, maxlength, "VIPRespawns");
+	}
+	
+}
+
+public void AttachAdminMenu() {
+	
+	TopMenuObject player_commands = FindTopMenuCategory(hAdminMenu, ADMINMENU_PLAYERCOMMANDS);
+	
+	if(player_commands == INVALID_TOPMENUOBJECT) {
+		return; // *ERROR*
+	}
+	
+	AddToTopMenu(hAdminMenu, "sm_vipspawn", TopMenuObject_Item, AdminMenu_TestEntry, player_commands, "sm_vipspawn", ADMFLAG_SLAY);
+	
+}
+
+public void AdminMenu_TestEntry(TopMenu topmenu, TopMenuAction action, TopMenuObject object_id, int client, char[] buffer, int maxlength) {
+	
+	if(action == TopMenuAction_DisplayOption) {
+		Format(buffer, maxlength, "Test!!");
+	} else if(action == TopMenuAction_SelectOption) {
+		CPrintToChat(client, "%p You pressed the admin-menu button!", prefix);
+	}
 	
 }
