@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (007)				#
+* #				   v1.5.7 (008)				#
 * #											#
 * ###########################################
 * 
@@ -21,8 +21,7 @@
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
 
-#define VERSION "1.5.7 (007)"
-#define prefix "[{green}VIPRespawns{default}]"
+#define VERSION "1.5.7 (008)"
 
 #undef REQUIRE_PLUGIN
 
@@ -30,6 +29,8 @@ int Number;
 int RespawnNumber[MAXPLAYERS +1];
 int RespawnLeft[MAXPLAYERS +1];
 int AlivePlayers;
+
+new String:prefix[] = "[{green}VIPRespawns{default}]"
 
 ConVar cvNumber;
 ConVar cvMenu;
@@ -154,7 +155,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 
 public Action sm_spawnsleft(int client, int args) {
 	
-	CPrintToChat(client, "%p You have %d respawns left!", prefix, RespawnLeft[client]);
+	CPrintToChat(client, "%s You have %d respawns left!", prefix, RespawnLeft[client]);
 	
 	return Plugin_Handled;
 }
@@ -195,17 +196,17 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%p %s used a Respawn!", prefix, name);
+					CPrintToChatAll("%s %s used a Respawn!", prefix, name);
 					
 				} else {
-					CPrintToChat(client, "%p You have used all your respawns!", prefix);
+					CPrintToChat(client, "%s You have used all your respawns!", prefix);
 				}
 				
 			} else {
-				CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
+				CPrintToChat(client, "%s You cannot respawn when alive!", prefix);
 			}
 		} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
-			CPrintToChat(client, "%p Not enough players alive. 3 players needs to be alive!", prefix);
+			CPrintToChat(client, "%s Not enough players alive. 3 players needs to be alive!", prefix);
 		} 
 		if(cvAlive.IntValue == 0) {
 			// Make sure client is alive
@@ -217,18 +218,18 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%p %s used a Respawn!", prefix, name);
+					CPrintToChatAll("%s %s used a Respawn!", prefix, name);
 					
 				} else {
-					CPrintToChat(client, "%p You have used all your respawns!", prefix);
+					CPrintToChat(client, "%s You have used all your respawns!", prefix);
 				}
 				
 			} else {
-				CPrintToChat(client, "%p You cannot respawn when alive!", prefix);
+				CPrintToChat(client, "%s You cannot respawn when alive!", prefix);
 			}
 		}
 	} else {
-		CPrintToChat(client, "%p You cannot respawn as spectator..", prefix);
+		CPrintToChat(client, "%s You cannot respawn as spectator..", prefix);
 	}
 	
 	return Plugin_Handled;
@@ -237,14 +238,14 @@ public Action sm_vipspawn(int client, int args) {
 // !checkrespawn
 public Action sm_checkrespawn(int client, int args) {
 	
-	CPrintToChat(client, "%p This command does not fulfill a purpose as of yet..", prefix);
+	CPrintToChat(client, "%s This command does not fulfill a purpose as of yet..", prefix);
 	
 	decl String:arg[32];
 	GetCmdArg(1, arg, sizeof(arg));
 	if(!strcmp(arg, "woot")) {
-		CPrintToChat(client, "%p Your first argument was %a", prefix, arg);
+		CPrintToChat(client, "%s Your first argument was %a", prefix, arg);
 	} else {
-		CPrintToChat(client, "%p Your first argument was not 'woot'. It was in fact %a", prefix, arg);
+		CPrintToChat(client, "%s Your first argument was not 'woot'. It was in fact %a", prefix, arg);
 	}
 	
 	/*
@@ -314,7 +315,7 @@ AttachAdminMenu() {
 		return; // *ERROR*
 	}
 	
-	AddToTopMenu(hAdminMenu, "sm_vipspawn", TopMenuObject_Item, AdminMenu_TestEntry, player_commands, "sm_vipspawn", ADMFLAG_SLAY);
+	AddToTopMenu(hAdminMenu, "sm_vipspawn", TopMenuObject_Item, AdminMenu_TestEntry, obj_dmcommands, "sm_vipspawn", ADMFLAG_SLAY);
 	
 }
 
@@ -323,7 +324,7 @@ public void AdminMenu_TestEntry(Handle:topmenu, TopMenuAction:action, TopMenuObj
 	if(action == TopMenuAction_DisplayOption) {
 		Format(buffer, maxlength, "Test!!");
 	} else if(action == TopMenuAction_SelectOption) {
-		CPrintToChat(client, "%p You pressed the admin-menu button!", prefix);
+		CPrintToChat(client, "%s You pressed the admin-menu button!", prefix);
 	}
 	
 }
