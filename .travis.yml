@@ -1,24 +1,24 @@
-language: c
+sudo: false
+
+addons:
+    apt_packages:
+        - lib32stdc++6
 
 env: 
   global:
     - INCLUDE=addons/sourcemod/scripting/include/
     - SCRIPTING=addons/sourcemod/scripting/
     - PLUGINS=addons/sourcemod/plugins/
-    - HOME=ftp.toastdev.de/plugins
   matrix:
     - SOURCEMOD=1.7.1
+    - SOURCEMOD=1.7.2
 
 before_install:
-  - sudo apt-get update
-  - sudo apt-get install gcc-multilib
-  - sudo apt-get install lynx
-  - sudo apt-get install lib32stdc++6
   - mkdir build-env
 
 install:
   - cd build-env
-  - wget http://sourcemod.gameconnect.net/files/sourcemod-$SOURCEMOD-linux.tar.gz
+  - wget https://sm.alliedmods.net/smdrop/1.8/sourcemod-1.8.0-git6002-linux.tar.gz
   - tar -xzvf sourcemod-$SOURCEMOD-linux.tar.gz
   - cd ../
   - find build-env/addons/sourcemod/scripting/ -name "*.sp" -type f -delete
