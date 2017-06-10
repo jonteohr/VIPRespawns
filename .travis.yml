@@ -17,7 +17,7 @@ before_install:
 
 install:
   - cd build-env
-  - wget https://sm.alliedmods.net/smdrop/1.8/sourcemod-1.8.0-git6002-linux.tar.gz
+  - wget http://www.sourcemod.net/latest.php?version=1.8&os=linux
   - tar -xzvf sourcemod-1.8.0-git6002-linux.tar.gz
   - cd ../
   - find build-env/addons/sourcemod/scripting/ -name "*.sp" -type f -delete
