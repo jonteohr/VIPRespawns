@@ -9,7 +9,8 @@ You can also check how many respawns you have left via `!spawnsleft`.
 A menu available via `!vip`, as long as it has not been disabled in config.
 
 ## Downloads
-[Releases](https://github.com/condolent/VIPRespawns/releases)
+[Releases](https://github.com/condolent/VIPRespawns/releases)  
+[Website](https://condolent.xyz/VIPRespawns/)
 
 ## Installation
 Simply download the `viprespawn.smx` file via the link above and drag the file to `/addons/sourcemod/plugins`.
