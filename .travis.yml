@@ -17,8 +17,7 @@ before_install:
 
 install:
   - cd build-env
-  - wget http://www.sourcemod.net/latest.php?version=1.8&os=linux -O sourcemod.tar.gz
-  - tar -xzf sourcemod.tar.gz
+  - wget http://www.sourcemod.net/latest.php?version={VERSION}&os=linux -O - | tar xvz
   - cd ../
   - find build-env/addons/sourcemod/scripting/ -name "*.sp" -type f -delete
   - cp -rv $SCRIPTING/. build-env/addons/sourcemod/scripting/
