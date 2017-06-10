@@ -10,7 +10,6 @@ env:
     - SCRIPTING=addons/sourcemod/scripting/
     - PLUGINS=addons/sourcemod/plugins/
   matrix:
-    - SOURCEMOD=1.7.1
     - SOURCEMOD=1.8
 
 before_install:
