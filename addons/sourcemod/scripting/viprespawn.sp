@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (008)				#
+* #				   v1.5.7 (009)				#
 * #											#
 * ###########################################
 * 
@@ -20,8 +20,9 @@
 
 #define CHOICE1 "#choice1"
 #define CHOICE2 "#choice2"
+#define userChoice "#user"
 
-#define VERSION "1.5.7 (008)"
+#define VERSION "1.5.7 (009)"
 
 #undef REQUIRE_PLUGIN
 
@@ -238,23 +239,65 @@ public Action sm_vipspawn(int client, int args) {
 // !checkrespawn
 public Action sm_checkrespawn(int client, int args) {
 	
-	CPrintToChat(client, "%s This command does not fulfill a purpose as of yet..", prefix);
+	char name[MAX_NAME_LENGTH];
 	
-	decl String:arg[32];
-	GetCmdArg(1, arg, sizeof(arg));
-	if(!strcmp(arg, "woot")) {
-		CPrintToChat(client, "%s Your first argument was %a", prefix, arg);
-	} else {
-		CPrintToChat(client, "%s Your first argument was not 'woot'. It was in fact %a", prefix, arg);
+	Menu usrMenu = new Menu(userMenuHandler, MENU_ACTIONS_ALL);
+	usrMenu.SetTitle("Check respawns");
+	
+	for(new i = 1; i <= MaxClients; i++) {
+		if(!IsClientInGame(i)) {
+			continue;
+		} else {
+			GetClientName(i, name, sizeof(name));
+			usrMenu.AddItem(userChoice, name);
+		}
 	}
 	
-	/*
-	* TODO:
-	* Run a for-loop checking all users. When there's a match; get the userID and check available respawns.
-	*/
+	usrMenu.Display(client, 20);
 	
 	return Plugin_Handled;
 	
+}
+
+public int userMenuHandler(Menu menu, MenuAction action, int client, int param2) {
+	char name[MAX_NAME_LENGTH];
+	GetClientName(client, name, sizeof(name));
+	
+	switch(action) {
+		case MenuAction_Start:
+		{
+		}
+		case MenuAction_Display:
+		{
+			char buffer[255];
+			Format(buffer, sizeof(buffer), "Check respawns left", client);
+			
+			Panel panel = view_as<Panel>(param2);
+			panel.SetTitle(buffer);
+		}
+		case MenuAction_Select:
+		{
+			char info[32];
+			menu.GetItem(param2, info, sizeof(info));
+			if(StrEqual(info, userChoice)) {
+				CPrintToChat(client, "%s You clicked something..", prefix);
+			}
+		}
+		case MenuAction_DrawItem:
+		{
+			int style;
+			char info[32];
+			menu.GetItem(param2, info, sizeof(info), style);
+			
+			return style;
+		}
+		case MenuAction_Cancel:
+		{
+			if(param2 == MenuCancel_ExitBack) GetAdminTopMenu().Display(client, TopMenuPosition_LastCategory);
+		}
+	}
+	
+	return 0;
 }
 
 // Useless method required for AutoExecConfig
@@ -263,7 +306,7 @@ public void OnConfigsExecuted() {
 }
 
 
-// ######## MENU STUFF ########
+// ######## ADMIN MENU STUFF ########
 
 public OnLibraryRemoved(const String:name[]) {
 	if(StrEqual(name, "adminmenu")) {
@@ -315,14 +358,14 @@ AttachAdminMenu() {
 		return; // *ERROR*
 	}
 	
-	AddToTopMenu(hAdminMenu, "sm_vipspawn", TopMenuObject_Item, AdminMenu_TestEntry, obj_dmcommands, "sm_vipspawn", ADMFLAG_SLAY);
+	AddToTopMenu(hAdminMenu, "sm_checkrespawn", TopMenuObject_Item, AdminMenu_CheckRespawn, obj_dmcommands, "sm_checkrespawn", ADMFLAG_KICK);
 	
 }
 
-public void AdminMenu_TestEntry(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, int client, char[] buffer, int maxlength) {
+public void AdminMenu_CheckRespawn(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, int client, char[] buffer, int maxlength) {
 	
 	if(action == TopMenuAction_DisplayOption) {
-		Format(buffer, maxlength, "Test!!");
+		Format(buffer, maxlength, "Check respawns left");
 	} else if(action == TopMenuAction_SelectOption) {
 		CPrintToChat(client, "%s You pressed the admin-menu button!", prefix);
 	}
