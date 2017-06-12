@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (010)				#
+* #				 v1.5.7 (011)				#
 * #											#
 * ###########################################
 * 
@@ -22,7 +22,7 @@
 #define CHOICE2 "#choice2"
 #define userChoice "#user"
 
-#define VERSION "1.5.7 (010)"
+#define VERSION "1.5.7 (011)"
 
 #undef REQUIRE_PLUGIN
 
@@ -284,10 +284,10 @@ public int userMenuHandler(Menu menu, MenuAction action, int client, int param2)
 			if(menu.GetItem(param2, sInfo, sizeof(sInfo))) { 
 				GetClientOfUserId(StringToInt(sInfo));
 				
-				int clientID = GetClientOfUserId(StringToInt(sInfo));
+				int target = GetClientOfUserId(StringToInt(sInfo));
 				
-				CPrintToChat(client, "%s was chosen", sInfo);
-				CPrintToChat(client, "%s has %d respawns left.", sInfo, RespawnLeft[clientID]);
+				CPrintToChat(client, "%s %N was chosen", prefix, StringToInt(sInfo));
+				CPrintToChat(client, "%s %N has %d respawns left.", prefix, sInfo, RespawnLeft[target]);
 			}
 		}
 		case MenuAction_DrawItem:
