@@ -243,18 +243,7 @@ public Action sm_checkrespawn(int client, int args) {
 	
 	Menu usrMenu = new Menu(userMenuHandler, MENU_ACTIONS_ALL);
 	usrMenu.SetTitle("Check respawns");
-	
-	/*for(new i = 1; i <= MaxClients; i++) {
-		if(!IsClientInGame(i)) {
-			continue;
-		} else {
-			GetClientName(i, name, sizeof(name));
-			usrMenu.AddItem(userChoice, name);
-		}
-	}*/
-	
 	AddTargetsToMenu(usrMenu, 0, true, false);
-	
 	usrMenu.Display(client, 20);
 	
 	return Plugin_Handled;
@@ -280,14 +269,12 @@ public int userMenuHandler(Menu menu, MenuAction action, int client, int param2)
 		case MenuAction_Select:
 		{
 			//bool GetMenuItem(int pos, char[] infoBuf, int infoBuffLen, int &style, char[] dispBuf, int dispBufLen);
-			char sInfo[64];
+			char sInfo[MAX_NAME_LENGTH];
 			if(menu.GetItem(param2, sInfo, sizeof(sInfo))) { 
 				GetClientOfUserId(StringToInt(sInfo));
-				
 				int target = GetClientOfUserId(StringToInt(sInfo));
 				
-				CPrintToChat(client, "%s %N was chosen", prefix, StringToInt(sInfo));
-				CPrintToChat(client, "%s %N has %d respawns left.", prefix, sInfo, RespawnLeft[target]);
+				CPrintToChat(client, "%s %N has %d respawns left.", prefix, target, RespawnLeft[target]);
 			}
 		}
 		case MenuAction_DrawItem:
