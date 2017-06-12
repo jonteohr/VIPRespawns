@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				   v1.5.7 (009)				#
+* #				   v1.5.7 (010)				#
 * #											#
 * ###########################################
 * 
@@ -22,7 +22,7 @@
 #define CHOICE2 "#choice2"
 #define userChoice "#user"
 
-#define VERSION "1.5.7 (009)"
+#define VERSION "1.5.7 (010)"
 
 #undef REQUIRE_PLUGIN
 
@@ -47,7 +47,7 @@ public Plugin myinfo = {
 	author = "Hypr & BaroNN",
 	description = "Gives VIP players some respawns per map.",
 	version = VERSION,
-	url = "https://github.com/condolent/viprespawns"
+	url = "https://condolent.xyz/VIPRespawns"
 };
 
 public void OnPluginStart() {
@@ -239,19 +239,21 @@ public Action sm_vipspawn(int client, int args) {
 // !checkrespawn
 public Action sm_checkrespawn(int client, int args) {
 	
-	char name[MAX_NAME_LENGTH];
+	//char name[MAX_NAME_LENGTH];
 	
 	Menu usrMenu = new Menu(userMenuHandler, MENU_ACTIONS_ALL);
 	usrMenu.SetTitle("Check respawns");
 	
-	for(new i = 1; i <= MaxClients; i++) {
+	/*for(new i = 1; i <= MaxClients; i++) {
 		if(!IsClientInGame(i)) {
 			continue;
 		} else {
 			GetClientName(i, name, sizeof(name));
 			usrMenu.AddItem(userChoice, name);
 		}
-	}
+	}*/
+	
+	AddTargetsToMenu(usrMenu, 0, true, false);
 	
 	usrMenu.Display(client, 20);
 	
@@ -277,10 +279,15 @@ public int userMenuHandler(Menu menu, MenuAction action, int client, int param2)
 		}
 		case MenuAction_Select:
 		{
-			char info[32];
-			menu.GetItem(param2, info, sizeof(info));
-			if(StrEqual(info, userChoice)) {
-				CPrintToChat(client, "%s You clicked something..", prefix);
+			//bool GetMenuItem(int pos, char[] infoBuf, int infoBuffLen, int &style, char[] dispBuf, int dispBufLen);
+			char sInfo[64];
+			if(menu.GetItem(param2, sInfo, sizeof(sInfo))) { 
+				GetClientOfUserId(StringToInt(sInfo));
+				
+				int clientID = GetClientOfUserId(StringToInt(sInfo));
+				
+				CPrintToChat(client, "%s was chosen", sInfo);
+				CPrintToChat(client, "%s has %d respawns left.", sInfo, RespawnLeft[clientID]);
 			}
 		}
 		case MenuAction_DrawItem:
