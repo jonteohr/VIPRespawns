@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				 v1.5.8 (002)				#
+* #				 v1.5.8 (003)				#
 * #											#
 * ###########################################
 * 
@@ -22,7 +22,7 @@
 #define CHOICE2 "#choice2"
 #define userChoice "#user"
 
-#define VERSION "1.5.7 (011)"
+#define VERSION "1.5.8 (003)"
 
 #undef REQUIRE_PLUGIN
 
@@ -93,7 +93,7 @@ public void OnMapStart() {
 public Action sm_vip(int client, int args) {
 	
 	char buff[128];
-	Format(buff, sizeof(buff), "Respawns left: %d", RespawnLeft[client]);
+	Format(buff, sizeof(buff), "%t", "Respawns Left Title", RespawnLeft[client]);
 	
 	Menu menu = new Menu(MenuHandler1, MENU_ACTIONS_ALL);
 	menu.SetTitle("VIP Menu");
@@ -158,7 +158,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 
 public Action sm_spawnsleft(int client, int args) {
 	
-	CPrintToChat(client, "%s %t", "Respawns left", prefix, RespawnLeft[client]);
+	CPrintToChat(client, "%s %t", prefix, "Respawns left", client, RespawnLeft[client]);
 	
 	return Plugin_Handled;
 }
@@ -199,17 +199,17 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%s %t", "Respawned broadcast", prefix, name);
+					CPrintToChatAll("%s %t", prefix, "Respawned broadcast", client, name);
 					
 				} else {
-					CPrintToChat(client, "%s %t", "All respawns used", prefix);
+					CPrintToChat(client, "%s %t", prefix, "All respawns used", client);
 				}
 				
 			} else {
-				CPrintToChat(client, "%s %t", "Cannot respawn alive", prefix);
+				CPrintToChat(client, "%s %t", prefix, "Cannot respawn alive", client);
 			}
 		} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
-			CPrintToChat(client, "%s %t", "Not enough players alive", prefix, cvAlive.IntValue);
+			CPrintToChat(client, "%s %t", prefix, "Not enough players alive", client, cvAlive.IntValue);
 		} 
 		if(cvAlive.IntValue == 0) {
 			// Make sure client is alive
@@ -221,18 +221,18 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%s %t", "Respawned broadcast", prefix, name);
+					CPrintToChatAll("%s %t", prefix, "Respawned broadcast", client, name);
 					
 				} else {
-					CPrintToChat(client, "%s %t", "All respawns used", prefix);
+					CPrintToChat(client, "%s %t", prefix, "All respawns used", client);
 				}
 				
 			} else {
-				CPrintToChat(client, "%s %t", "Cannot respawn alive", prefix);
+				CPrintToChat(client, "%s %t", prefix, "Cannot respawn alive", client);
 			}
 		}
 	} else {
-		CPrintToChat(client, "%s %t", "Cannot respawn as spec", prefix);
+		CPrintToChat(client, "%s %t", prefix, "Cannot respawn as spec", client);
 	}
 	
 	return Plugin_Handled;
@@ -279,7 +279,7 @@ public int userMenuHandler(Menu menu, MenuAction action, int client, int param2)
 				GetClientOfUserId(StringToInt(sInfo));
 				int target = GetClientOfUserId(StringToInt(sInfo));
 				
-				CPrintToChat(client, "%s %t", "Users available respawns", prefix, target, RespawnLeft[target]);
+				CPrintToChat(client, "%s %t", prefix, "Users available respawns", client, target, RespawnLeft[target]);
 			}
 		}
 		case MenuAction_DrawItem:

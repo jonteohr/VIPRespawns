@@ -26,23 +26,23 @@
 	
 	"Users available respawns"
 	{
-		"#format"	"{2:N},{3:d}"
-		"en"	"{2} has {3} respawns left."
-		"se"	"{2} har {3} respawns kvar."
+		"#format"	"{1:N},{2:d}"
+		"en"	"{1} has {2} respawns left."
+		"se"	"{1} har {2} respawns kvar."
 	}
 	
 	"Respawned broadcast"
 	{
-		"#format"	"{2:s}"
-		"en"	"{2} used a Respawn!"
-		"se"	"{2} använde en Respawn!"
+		"#format"	"{1:N}"
+		"en"	"{1} used a Respawn!"
+		"se"	"{1} använde en Respawn!"
 	}
 	
 	"Respawns left"
 	{
-		"#format"	"{2:d}"
-		"en"	"You have {2} respawns left!"
-		"se"	"Du har {2} respawns kvar!"
+		"#format"	"{1:d}"
+		"en"	"You have {1} respawns left!"
+		"se"	"Du har {1} respawns kvar!"
 	}
 	
 	"Vip menu"
@@ -53,8 +53,15 @@
 	
 	"Not enough players alive"
 	{
-		"#format"	"{2:d}"
-		"en"	"Not enough players alive. {2} players needs to be alive in order to respawn!"
-		"se"	"Det är inte tillräckligt med spelare levande. Det behövs {2} spelare levande för att respawna!"
+		"#format"	"{1:d}"
+		"en"	"Not enough players alive. {1} players needs to be alive in order to respawn!"
+		"se"	"Det är inte tillräckligt med spelare levande. Det behövs {1} spelare levande för att respawna!"
+	}
+	
+	"Respawns Left Title"
+	{
+		"#format"	"{1:d}"
+		"en"	"Respawns left: {1}"
+		"se"	"Respawns kvar: {1}"
 	}
 }
