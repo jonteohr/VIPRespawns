@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				 v1.5.7 (011)				#
+* #				 v1.5.8 (001)				#
 * #											#
 * ###########################################
 * 
@@ -51,6 +51,8 @@ public Plugin myinfo = {
 };
 
 public void OnPluginStart() {
+	
+	LoadTranslations("viprespawn.phrases.txt");
 	
 	cvNumber = CreateConVar("sm_respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
 	cvMenu = CreateConVar("sm_enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
@@ -156,7 +158,7 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 
 public Action sm_spawnsleft(int client, int args) {
 	
-	CPrintToChat(client, "%s You have %d respawns left!", prefix, RespawnLeft[client]);
+	CPrintToChat(client, "%s %T", "Respawns left", prefix, RespawnLeft[client]);
 	
 	return Plugin_Handled;
 }
@@ -197,17 +199,17 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%s %s used a Respawn!", prefix, name);
+					CPrintToChatAll("%s %T", "Respawned broadcast", prefix, name);
 					
 				} else {
-					CPrintToChat(client, "%s You have used all your respawns!", prefix);
+					CPrintToChat(client, "%s %T", "All respawns used", prefix);
 				}
 				
 			} else {
-				CPrintToChat(client, "%s You cannot respawn when alive!", prefix);
+				CPrintToChat(client, "%s %T", "Cannot respawn alive", prefix);
 			}
 		} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
-			CPrintToChat(client, "%s Not enough players alive. 3 players needs to be alive!", prefix);
+			CPrintToChat(client, "%s %T", "Not enough players alive", prefix, cvAlive.IntValue);
 		} 
 		if(cvAlive.IntValue == 0) {
 			// Make sure client is alive
@@ -219,18 +221,18 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%s %s used a Respawn!", prefix, name);
+					CPrintToChatAll("%s %T", "Respawned broadcast", prefix, name);
 					
 				} else {
-					CPrintToChat(client, "%s You have used all your respawns!", prefix);
+					CPrintToChat(client, "%s %T", "All respawns used", prefix);
 				}
 				
 			} else {
-				CPrintToChat(client, "%s You cannot respawn when alive!", prefix);
+				CPrintToChat(client, "%s %T", "Cannot respawn alive", prefix);
 			}
 		}
 	} else {
-		CPrintToChat(client, "%s You cannot respawn as spectator..", prefix);
+		CPrintToChat(client, "%s %T", "Cannot respawn as spec", prefix);
 	}
 	
 	return Plugin_Handled;
@@ -241,8 +243,11 @@ public Action sm_checkrespawn(int client, int args) {
 	
 	//char name[MAX_NAME_LENGTH];
 	
+	char title[32];
+	Format(title, sizeof(title), "%T", "Check respawns left");
+	
 	Menu usrMenu = new Menu(userMenuHandler, MENU_ACTIONS_ALL);
-	usrMenu.SetTitle("Check respawns");
+	usrMenu.SetTitle(title);
 	AddTargetsToMenu(usrMenu, 0, true, false);
 	usrMenu.Display(client, 20);
 	
@@ -261,7 +266,7 @@ public int userMenuHandler(Menu menu, MenuAction action, int client, int param2)
 		case MenuAction_Display:
 		{
 			char buffer[255];
-			Format(buffer, sizeof(buffer), "Check respawns left", client);
+			Format(buffer, sizeof(buffer), "%T", "Check respawns left", client);
 			
 			Panel panel = view_as<Panel>(param2);
 			panel.SetTitle(buffer);
@@ -274,7 +279,7 @@ public int userMenuHandler(Menu menu, MenuAction action, int client, int param2)
 				GetClientOfUserId(StringToInt(sInfo));
 				int target = GetClientOfUserId(StringToInt(sInfo));
 				
-				CPrintToChat(client, "%s %N has %d respawns left.", prefix, target, RespawnLeft[target]);
+				CPrintToChat(client, "%s %T", "Users available respawns", prefix, target, RespawnLeft[target]);
 			}
 		}
 		case MenuAction_DrawItem:
@@ -359,9 +364,10 @@ AttachAdminMenu() {
 public void AdminMenu_CheckRespawn(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, int client, char[] buffer, int maxlength) {
 	
 	if(action == TopMenuAction_DisplayOption) {
-		Format(buffer, maxlength, "Check respawns left");
+		Format(buffer, maxlength, "%T", "Check respawns left");
 	} else if(action == TopMenuAction_SelectOption) {
-		CPrintToChat(client, "%s You pressed the admin-menu button!", prefix);
+		//CPrintToChat(client, "%s You pressed the admin-menu button!", prefix);
+		FakeClientCommand(client, "sm_checkrespawn");
 	}
 	
 }
