@@ -2,7 +2,7 @@
 * ###########################################
 * #											#
 * #				 VIPRespawns				#
-* #				 v1.5.8 (004)				#
+* #				 v1.5.8 (005)				#
 * #											#
 * ###########################################
 * 
@@ -22,7 +22,7 @@
 #define CHOICE2 "#choice2"
 #define userChoice "#user"
 
-#define VERSION "1.5.8 (003)"
+#define VERSION "1.5.8 (005)"
 
 #undef REQUIRE_PLUGIN
 
@@ -53,6 +53,7 @@ public Plugin myinfo = {
 public void OnPluginStart() {
 	
 	LoadTranslations("viprespawn.phrases.txt");
+	SetGlobalTransTarget(LANG_SERVER);
 	
 	cvNumber = CreateConVar("sm_respawn_amount", "3", "Amount of times a user is allowed to respawn per map");
 	cvMenu = CreateConVar("sm_enable_vip_menu", "1", "Enable the VIP-menu called with !vip?\n(0 = Disable, 1 = Enable)", _, true, 0.0, true, 1.0);
@@ -93,7 +94,7 @@ public void OnMapStart() {
 public Action sm_vip(int client, int args) {
 	
 	char buff[128];
-	Format(buff, sizeof(buff), "%T", "Respawns Left Title", client, RespawnLeft[client]);
+	Format(buff, sizeof(buff), "%t", "Respawns Left Title", RespawnLeft[client]);
 	
 	Menu menu = new Menu(MenuHandler1, MENU_ACTIONS_ALL);
 	menu.SetTitle("VIP Menu");
@@ -158,13 +159,84 @@ public int MenuHandler1(Menu menu, MenuAction action, int client, int param2) {
 
 public Action sm_spawnsleft(int client, int args) {
 	
-	CPrintToChat(client, "%s %T", prefix, "Respawns left", client, RespawnLeft[client]);
+	CPrintToChat(client, "%s %t", prefix, "Respawns left", RespawnLeft[client]);
 	
 	return Plugin_Handled;
 }
 
 public Action sm_vipspawn(int client, int args) {
 	
+	initRespawn(client);
+	
+	return Plugin_Handled;
+}
+
+// !checkrespawn
+public Action sm_checkrespawn(int client, int args) {
+	
+	//char name[MAX_NAME_LENGTH];
+	
+	char title[32];
+	Format(title, sizeof(title), "%t", "Check respawns left");
+	
+	Menu usrMenu = new Menu(userMenuHandler, MENU_ACTIONS_ALL);
+	usrMenu.SetTitle(title);
+	AddTargetsToMenu(usrMenu, 0, true, false);
+	usrMenu.Display(client, 20);
+	
+	return Plugin_Handled;
+	
+}
+
+public int userMenuHandler(Menu menu, MenuAction action, int client, int param2) {
+	char name[MAX_NAME_LENGTH];
+	GetClientName(client, name, sizeof(name));
+	
+	switch(action) {
+		case MenuAction_Start:
+		{
+		}
+		case MenuAction_Display:
+		{
+			char buffer[255];
+			Format(buffer, sizeof(buffer), "%t", "Check respawns left");
+			
+			Panel panel = view_as<Panel>(param2);
+			panel.SetTitle(buffer);
+		}
+		case MenuAction_Select:
+		{
+			//bool GetMenuItem(int pos, char[] infoBuf, int infoBuffLen, int &style, char[] dispBuf, int dispBufLen);
+			char sInfo[MAX_NAME_LENGTH];
+			if(menu.GetItem(param2, sInfo, sizeof(sInfo))) { 
+				GetClientOfUserId(StringToInt(sInfo));
+				int target = GetClientOfUserId(StringToInt(sInfo));
+				
+				CPrintToChat(client, "%s %t", prefix, "Users available respawns", target, RespawnLeft[target]);
+			}
+		}
+		case MenuAction_DrawItem:
+		{
+			int style;
+			char info[32];
+			menu.GetItem(param2, info, sizeof(info), style);
+			
+			return style;
+		}
+		case MenuAction_Cancel:
+		{
+			if(param2 == MenuCancel_ExitBack) GetAdminTopMenu().Display(client, TopMenuPosition_LastCategory);
+		}
+	}
+	
+	return 0;
+}
+
+/*
+* The actual respawn sequence.
+* This checks everything from the clients' team to respawns available. Call this whenever the client tries to respawn.
+*/
+public void initRespawn(int client) {
 	if(cvAliveSide.IntValue == 0) {
 		for(new i=1; i<=MaxClients; i++) {
 			if(IsClientInGame(i) && IsPlayerAlive(i)) {
@@ -199,17 +271,17 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%s %T", prefix, "Respawned broadcast", client, name);
+					CPrintToChatAll("%s %t", prefix, "Respawned broadcast", name);
 					
 				} else {
-					CPrintToChat(client, "%s %T", prefix, "All respawns used", client);
+					CPrintToChat(client, "%s %t", prefix, "All respawns used");
 				}
 				
 			} else {
-				CPrintToChat(client, "%s %T", prefix, "Cannot respawn alive", client);
+				CPrintToChat(client, "%s %t", prefix, "Cannot respawn alive");
 			}
 		} else if(cvAlive.IntValue != 0 && AlivePlayers < cvAlive.IntValue) {
-			CPrintToChat(client, "%s %T", prefix, "Not enough players alive", client, cvAlive.IntValue);
+			CPrintToChat(client, "%s %t", prefix, "Not enough players alive", cvAlive.IntValue);
 		} 
 		if(cvAlive.IntValue == 0) {
 			// Make sure client is alive
@@ -221,82 +293,19 @@ public Action sm_vipspawn(int client, int args) {
 					CS_RespawnPlayer(client);
 					RespawnNumber[client] += 1;
 					RespawnLeft[client] -= 1;
-					CPrintToChatAll("%s %T", prefix, "Respawned broadcast", client, name);
+					CPrintToChatAll("%s %t", prefix, "Respawned broadcast", name);
 					
 				} else {
-					CPrintToChat(client, "%s %T", prefix, "All respawns used", client);
+					CPrintToChat(client, "%s %t", prefix, "All respawns used");
 				}
 				
 			} else {
-				CPrintToChat(client, "%s %T", prefix, "Cannot respawn alive", client);
+				CPrintToChat(client, "%s %t", prefix, "Cannot respawn alive");
 			}
 		}
 	} else {
-		CPrintToChat(client, "%s %T", prefix, "Cannot respawn as spec", client);
+		CPrintToChat(client, "%s %t", prefix, "Cannot respawn as spec");
 	}
-	
-	return Plugin_Handled;
-}
-
-// !checkrespawn
-public Action sm_checkrespawn(int client, int args) {
-	
-	//char name[MAX_NAME_LENGTH];
-	
-	char title[32];
-	Format(title, sizeof(title), "%T", "Check respawns left", client);
-	
-	Menu usrMenu = new Menu(userMenuHandler, MENU_ACTIONS_ALL);
-	usrMenu.SetTitle(title);
-	AddTargetsToMenu(usrMenu, 0, true, false);
-	usrMenu.Display(client, 20);
-	
-	return Plugin_Handled;
-	
-}
-
-public int userMenuHandler(Menu menu, MenuAction action, int client, int param2) {
-	char name[MAX_NAME_LENGTH];
-	GetClientName(client, name, sizeof(name));
-	
-	switch(action) {
-		case MenuAction_Start:
-		{
-		}
-		case MenuAction_Display:
-		{
-			char buffer[255];
-			Format(buffer, sizeof(buffer), "%T", "Check respawns left", client);
-			
-			Panel panel = view_as<Panel>(param2);
-			panel.SetTitle(buffer);
-		}
-		case MenuAction_Select:
-		{
-			//bool GetMenuItem(int pos, char[] infoBuf, int infoBuffLen, int &style, char[] dispBuf, int dispBufLen);
-			char sInfo[MAX_NAME_LENGTH];
-			if(menu.GetItem(param2, sInfo, sizeof(sInfo))) { 
-				GetClientOfUserId(StringToInt(sInfo));
-				int target = GetClientOfUserId(StringToInt(sInfo));
-				
-				CPrintToChat(client, "%s %T", prefix, "Users available respawns", client, target, RespawnLeft[target]);
-			}
-		}
-		case MenuAction_DrawItem:
-		{
-			int style;
-			char info[32];
-			menu.GetItem(param2, info, sizeof(info), style);
-			
-			return style;
-		}
-		case MenuAction_Cancel:
-		{
-			if(param2 == MenuCancel_ExitBack) GetAdminTopMenu().Display(client, TopMenuPosition_LastCategory);
-		}
-	}
-	
-	return 0;
 }
 
 // Useless method required for AutoExecConfig
@@ -364,7 +373,7 @@ AttachAdminMenu() {
 public void AdminMenu_CheckRespawn(Handle:topmenu, TopMenuAction:action, TopMenuObject:object_id, int client, char[] buffer, int maxlength) {
 	
 	if(action == TopMenuAction_DisplayOption) {
-		Format(buffer, maxlength, "%T", "Check respawns left", client);
+		Format(buffer, maxlength, "%t", "Check respawns left");
 	} else if(action == TopMenuAction_SelectOption) {
 		//CPrintToChat(client, "%s You pressed the admin-menu button!", prefix);
 		FakeClientCommand(client, "sm_checkrespawn");
