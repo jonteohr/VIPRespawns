@@ -1,4 +1,4 @@
-# VIPRespawns [![Build Status](https://travis-ci.org/condolent/VIPRespawns.svg?branch=master)](https://travis-ci.org/condolent/VIPRespawns) [![Chat on Gitter](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/VIPRespawns/Lobby) [![Releases](https://img.shields.io/badge/release-1.5.7-orange.svg)](https://github.com/condolent/VIPRespawns/releases) ![Branch](https://img.shields.io/badge/branch-master-lightgrey.svg)
+# VIPRespawns [![Build Status](https://travis-ci.org/condolent/VIPRespawns.svg?branch=master)](https://travis-ci.org/condolent/VIPRespawns) [![Chat on Gitter](https://badges.gitter.im/gitterHQ/gitter.png)](https://gitter.im/VIPRespawns/Lobby) [![Releases](https://img.shields.io/badge/release-1.5.8-orange.svg)](https://github.com/condolent/VIPRespawns/releases) ![Branch](https://img.shields.io/badge/branch-master-lightgrey.svg)
 Sourcemod plugin. Allowing players with A-flag respawn x times per map!  
 [AlliedMods](https://forums.alliedmods.net/showthread.php?p=2523408#post2523408)
 
