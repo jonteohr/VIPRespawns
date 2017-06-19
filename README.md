@@ -53,6 +53,11 @@ sm_minimum_players_alive "3"
 sm_minimum_players_alive_side "0"
 ```
 
+## Translation
+Want to help translate the plugin?  
+Create a [Pull request](https://github.com/condolent/VIPRespawns/pulls) and edit the viprespawn.phrases.txt with your language added. Or you can create a [ticket](https://github.com/condolent/VIPRespawns/issues) with and write which language you're fluent within!
+
+
 
 ### Credits
 Props to [B2SX](https://forums.alliedmods.net/member.php?u=265974) for creating the base-code for respawns!  
